@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🎲 Team Randomizer</title>
+  <title>🎲 Random Team Generator - WHIZ</title>
   <style>
     :root {
       --primary-bg: #222;
@@ -73,7 +73,7 @@
 
     .name-list {
       max-height: 300px;
-      overflow-y: auto;
+      overflow-y: scroll;
       padding: 10px;
       background: #1c1c1c;
       border-radius: 8px;
@@ -208,6 +208,19 @@
       transform: scale(1.05);
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     }
+
+    .name-list::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .name-list::-webkit-scrollbar-thumb {
+      background: linear-gradient(to bottom, #f9ca24, #ff6b6b);
+      border-radius: 10px;
+    }
+
+    .name-list::-webkit-scrollbar-track {
+      background: #1c1c1c;
+    }
   </style>
 </head>
 
@@ -215,14 +228,15 @@
 
   <header>
     <h1>🎲 Random Team Generator - WHIZ</h1>
-    <img id="logo"
-      src="https://www.whizti.com/img/footer-logo.png"
-      alt="Logo">
+    <img id="logo" src="https://www.whizti.com/img/footer-logo.png" alt="Logo">
   </header>
 
   <div class="main">
     <div class="left-panel">
-      <label>Participants (one per line):</label>
+      <label>
+        Team Members: <span id="selectedCount">0</span> / <span id="totalCount">0</span>
+      </label>
+
       <div id="nameCheckboxes" class="name-list"></div>
       <div class="control-panel">
         <div>
@@ -371,9 +385,21 @@
     }
 
     const defaultNames = [
-      "Shiv", "Uttam", "Pradip", "Harshal",
-      "Prakash", "Nilesh", "Gaurav", "Shambhavi",
-      "Madhav", "Vrushali", "Shubham", "Kaveri"
+      "Yogesh",
+      "Shiv",
+      "Uttam",
+      "Pradip",
+      "Harshal",
+      "Prakash",
+      "Nilesh",
+      "Gaurav",
+      "Shambhavi",
+      "Madhav",
+      "Vrushali",
+      "Shubham",
+      "Saurabh",
+      "Rohit",
+      "Kaveri"
     ];
 
     function renderNameCheckboxes() {
@@ -386,7 +412,7 @@
     }
 
     renderNameCheckboxes(); // Call this on page load
-
+    updateNameCount();
 
     function renderNameCheckboxes() {
       const container = document.getElementById("nameCheckboxes");
@@ -395,6 +421,10 @@
       <input type="checkbox" value="${name}" checked /> ${name}
     </label>
   `).join('');
+      container.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+        cb.addEventListener('change', updateNameCount);
+      });
+
     }
 
 
@@ -411,6 +441,7 @@
       if (name && !defaultNames.includes(name)) {
         defaultNames.push(name);
         renderNameCheckboxes();
+        updateNameCount();
         input.value = '';
 
         // Scroll to the newly added name
@@ -425,7 +456,17 @@
     function selectAll(state) {
       const checkboxes = document.querySelectorAll('#nameCheckboxes input[type="checkbox"]');
       checkboxes.forEach(cb => cb.checked = state);
+      updateNameCount();
     }
+
+    function updateNameCount() {
+      const checkboxes = document.querySelectorAll('#nameCheckboxes input[type="checkbox"]');
+      const selected = document.querySelectorAll('#nameCheckboxes input[type="checkbox"]:checked');
+
+      document.getElementById("selectedCount").textContent = selected.length;
+      document.getElementById("totalCount").textContent = checkboxes.length;
+    }
+
 
   </script>
 </body>
