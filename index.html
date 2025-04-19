@@ -1,257 +1,433 @@
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <title>Team Randomizer Pro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🎲 Team Randomizer</title>
   <style>
+    :root {
+      --primary-bg: #222;
+      --panel-bg: #2d2d2d;
+      --text-color: #fff;
+      --accent: #ffcc00;
+      --card-bg: #333;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: 'Segoe UI', sans-serif;
-      padding: 2rem;
       margin: 0;
-      background: #0b0c10;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #1f1c2c, #928dab);
+      color: var(--text-color);
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(to right, #434343, #000000);
+      padding: 20px;
       color: white;
-      overflow-x: hidden;
     }
 
-    /* 🌌 Animated Star Background */
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: url('https://www.transparenttextures.com/patterns/stardust.png');
-      animation: stars 20s linear infinite;
-      opacity: 0.2;
-      z-index: -1;
+    header h1 {
+      margin: 0;
+      font-size: 1.8rem;
     }
 
-    @keyframes stars {
-      0% { background-position: 0 0; }
-      100% { background-position: 1000px 1000px; }
+    #logo {
+      height: 40px;
+    }
+
+    .main {
+      display: flex;
+      padding: 20px;
+    }
+
+    .left-panel {
+      flex: 1;
+      padding: 20px;
+      background: var(--panel-bg);
+      border-radius: 10px;
+      margin-right: 20px;
+    }
+
+    .left-panel label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: bold;
     }
 
     textarea {
       width: 100%;
-      height: 150px;
       padding: 10px;
-      font-size: 16px;
-      margin-bottom: 10px;
       border-radius: 8px;
       border: none;
-      resize: none;
+      font-size: 1rem;
+      resize: vertical;
     }
 
-    select, button {
+    .name-list {
+      max-height: 300px;
+      overflow-y: auto;
       padding: 10px;
-      font-size: 16px;
-      margin: 10px 5px;
-      border-radius: 6px;
-      border: none;
+      background: #1c1c1c;
+      border-radius: 8px;
     }
 
-    button {
-      background-color: #28a745;
-      color: white;
-      cursor: pointer;
-    }
 
-    button:hover {
-      background-color: #218838;
-    }
-
-    .teams {
-      margin-top: 20px;
-      display: grid;
+    .right-panel {
+      flex: 2;
+      display: flex;
+      flex-wrap: wrap;
       gap: 20px;
-    }
-
-    .team {
-      background: #1f2833;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 200px;
       padding: 10px;
-      border-radius: 12px;
-      animation: flipIn 0.8s ease-out forwards;
-      transform: rotateY(90deg);
-      opacity: 0;
-      box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
     }
 
-    .team h3 {
-      margin: 0;
-      margin-bottom: 8px;
-      font-size: 20px;
+    .placeholder-card,
+    .team-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 15px;
+      width: 200px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      color: white;
+      transform: rotateY(90deg);
+      animation: flipIn 0.6s ease forwards;
     }
 
     @keyframes flipIn {
       to {
-        transform: rotateY(0deg);
-        opacity: 1;
+        transform: rotateY(0);
       }
+    }
+
+    .team-title {
+      font-weight: bold;
+      font-size: 1.2rem;
+      margin-bottom: 5px;
+      color: var(--accent);
+      animation: pulse 1.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulse {
+      from {
+        transform: scale(1);
+      }
+
+      to {
+        transform: scale(1.08);
+      }
+    }
+
+    .mascot {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .bottom-bar {
+      background: #111;
+      padding: 15px;
+      text-align: center;
+      font-size: 1rem;
+    }
+
+    .bottom-bar select,
+    .bottom-bar button {
+      padding: 8px 15px;
+      margin: 5px;
+      border-radius: 5px;
+      border: none;
+      font-size: 1rem;
     }
 
     #countdown {
-      font-size: 32px;
-      color: #ffc107;
+      font-size: 1.5rem;
+      margin-top: 10px;
+      color: #ffcc00;
+    }
+
+    canvas#confetti {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    .control-panel {
+      margin-top: 15px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .control-panel input[type="text"] {
+      padding: 8px 12px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background: #2c2c2c;
+      color: #fff;
+      outline: none;
+      width: 180px;
+    }
+
+    .control-panel input[type="text"]::placeholder {
+      color: #888;
+    }
+
+    .control-panel button {
+      padding: 8px 12px;
+      font-size: 15px;
+      background: linear-gradient(to right, #ff6b6b, #f9ca24);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
       font-weight: bold;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
 
-    #shufflingMessage {
-      margin-top: 20px;
-      font-size: 20px;
-    }
-
-    #mascot {
-      font-size: 50px;
-      margin-bottom: 10px;
-      animation: bounce 2s infinite ease-in-out;
-    }
-
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
+    .control-panel button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     }
   </style>
-
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
+
 <body>
 
-  <h1>✨ Team Randomizer</h1>
-  <div id="mascot">🦄</div>
+  <header>
+    <h1>🎲 Random Team Generator - WHIZ</h1>
+    <img id="logo"
+      src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Logo_TV_2015.svg/512px-Logo_TV_2015.svg.png"
+      alt="Logo">
+  </header>
 
-  <textarea id="nameInput" placeholder="Enter names, one per line..."></textarea><br>
+  <div class="main">
+    <div class="left-panel">
+      <label>Participants (one per line):</label>
+      <div id="nameCheckboxes" class="name-list"></div>
+      <div class="control-panel">
+        <div>
+          <input type="text" id="newNameInput" placeholder="Add new name" />
+          <button onclick="addName()">Add</button>
+        </div>
+        <div style="margin-top: 10px;">
+          <button onclick="selectAll(true)">Select All</button>
+          <button onclick="selectAll(false)">Deselect All</button>
+        </div>
+      </div>
 
-  <label for="teamCount">Number of Teams:</label>
-  <select id="teamCount">
-    <option value="2">2</option>
-    <option value="3">3</option>
-    <option value="4">4</option>
-    <option value="5">5</option>
-  </select>
+    </div>
+    <div class="right-panel" id="teamsContainer">
+      <div class="placeholder-card">👋 Your teams will appear here!</div>
+      <div class="placeholder-card">✨ Ready when you are…</div>
+    </div>
+  </div>
 
-  <button onclick="startCountdown()">Create Teams</button>
-  <button onclick="reshuffleTeams()" id="reshuffleBtn" style="display:none;">🔄 Shuffle Again</button>
+  <div class="bottom-bar">
+    Teams:
+    <select id="numTeams">
+      <option value="2">2</option>
+      <option value="3" selected>3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+    </select>
+    <button onclick="shuffleTeams()">Create</button>
+    <div id="countdown"></div>
+  </div>
 
-  <div id="countdown"></div>
-  <div id="shufflingMessage"></div>
-  <div class="teams" id="teamsContainer"></div>
-
-  <!-- 🔊 Sound Effects -->
-  <audio id="soundShuffle" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_61cc1b24cd.mp3" preload="auto"></audio>
-  <audio id="soundDrumroll" src="https://cdn.pixabay.com/download/audio/2022/02/23/audio_1817cb6924.mp3" preload="auto"></audio>
-  <audio id="soundTada" src="https://cdn.pixabay.com/download/audio/2022/02/23/audio_82f1fbdf74.mp3" preload="auto"></audio>
+  <canvas id="confetti"></canvas>
+  <audio id="popSound" src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.wav"></audio>
 
   <script>
-    const adjectives = ["Mighty", "Electric", "Funky", "Shadow", "Crimson", "Silent", "Golden", "Frozen", "Turbo", "Neon", "Quantum", "Brave"];
-    const nouns = ["Wolves", "Tigers", "Koalas", "Wizards", "Ninjas", "Dragons", "Sharks", "Panthers", "Penguins", "Owls", "Llamas", "Foxes"];
-    const mascots = ["🦄", "🐸", "🤖", "🐙", "🧸", "🐢", "🦙", "🐱‍👓", "🐧", "🐲", "🧞", "👾"];
+    const mascots = ['🦄', '🐉', '🐸', '🦕', '🦊', '🐧', '🐙', '🐢', '🐼', '🐝', '🦁', '🦋', '🐯', '🐨', '🦖'];
+    const adjectives = ['Blazing', 'Sneaky', 'Funky', 'Mighty', 'Chill', 'Fierce', 'Epic', 'Glowing', 'Flying', 'Turbo'];
+    const nouns = ['Unicorns', 'Wizards', 'Dragons', 'Penguins', 'Rockets', 'Pirates', 'Sloths', 'Aliens', 'Tacos', 'Monkeys'];
 
-    function setRandomMascot() {
-      const mascot = mascots[Math.floor(Math.random() * mascots.length)];
-      document.getElementById("mascot").textContent = mascot;
-    }
+    const confettiCanvas = document.getElementById("confetti");
+    const ctx = confettiCanvas.getContext("2d");
+    confettiCanvas.width = window.innerWidth;
+    confettiCanvas.height = window.innerHeight;
 
-    function generateTeamName() {
+    function getRandomTeamName() {
       const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
       const noun = nouns[Math.floor(Math.random() * nouns.length)];
-      return `${adj} ${noun}`;
+      return `The ${adj} ${noun}`;
     }
 
-    function shuffle(array) {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-      }
-    }
+    function shuffleTeams() {
+      const checkboxes = document.querySelectorAll('#nameCheckboxes input[type="checkbox"]:checked');
+      const names = Array.from(checkboxes).map(cb => cb.value);
 
-    function emojiConfetti() {
-      const emojis = ["🎉", "✨", "🎊", "💥", "🌟", "🪩"];
-      const end = Date.now() + 1000;
-      (function frame() {
-        confetti({
-          particleCount: 6,
-          angle: 60 + Math.random() * 60,
-          spread: 55,
-          origin: { y: 0.6 },
-          shapes: ["text"],
-          scalar: 1.2,
-          ticks: 200,
-          gravity: 0.6,
-          emoji: emojis[Math.floor(Math.random() * emojis.length)]
-        });
-        if (Date.now() < end) {
-          requestAnimationFrame(frame);
-        }
-      })();
-    }
+      const numTeams = parseInt(document.getElementById("numTeams").value);
+      const countdownEl = document.getElementById("countdown");
+      const popSound = document.getElementById("popSound");
 
-    function startCountdown() {
-      const namesText = document.getElementById("nameInput").value.trim();
-      const names = namesText.split("\n").map(n => n.trim()).filter(n => n);
-      const teamCount = parseInt(document.getElementById("teamCount").value);
-
-      if (names.length < teamCount) {
-        alert("Not enough names for that many teams!");
+      if (names.length < numTeams) {
+        alert("Not enough participants for that many teams.");
         return;
       }
 
-      setRandomMascot();
-      document.getElementById("teamsContainer").innerHTML = "";
-      document.getElementById("shufflingMessage").textContent = "";
-      document.getElementById("reshuffleBtn").style.display = "none";
-
-      document.getElementById("soundDrumroll").play();
-
-      let timeLeft = 3;
-      const countdownEl = document.getElementById("countdown");
-      countdownEl.textContent = `Revealing in ${timeLeft}...`;
-
+      let count = 3;
+      countdownEl.textContent = `Starting in ${count}...`;
       const interval = setInterval(() => {
-        timeLeft--;
-        if (timeLeft > 0) {
-          countdownEl.textContent = `Revealing in ${timeLeft}...`;
-        } else {
+        count--;
+        countdownEl.textContent = count > 0 ? `Starting in ${count}...` : "Go!";
+        if (count === 0) {
           clearInterval(interval);
-          countdownEl.textContent = "";
-          createTeams(names, teamCount);
+          setTimeout(() => {
+            countdownEl.textContent = "";
+            buildTeams(names, numTeams);
+            popSound.play();
+            fireConfetti();
+          }, 500);
         }
       }, 1000);
     }
 
-    function createTeams(names, teamCount) {
-      shuffle(names);
-      document.getElementById("soundShuffle").play();
-
+    function buildTeams(names, numTeams) {
       const container = document.getElementById("teamsContainer");
-      const teams = Array.from({ length: teamCount }, () => []);
+      container.innerHTML = "";
+
+      for (let i = names.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [names[i], names[j]] = [names[j], names[i]];
+      }
+
+      const teams = Array.from({ length: numTeams }, () => []);
       names.forEach((name, i) => {
-        teams[i % teamCount].push(name);
+        teams[i % numTeams].push(name);
       });
 
-      document.getElementById("shufflingMessage").textContent = "✨ Teams are ready!";
-      setTimeout(() => {
-        emojiConfetti();
-        document.getElementById("soundTada").play();
-      }, 200);
+      teams.forEach((members, i) => {
+        const card = document.createElement("div");
+        card.className = "team-card";
+        card.style.animationDelay = `${i * 0.2}s`;
 
-      teams.forEach((team, index) => {
-        const teamDiv = document.createElement("div");
-        teamDiv.className = "team";
-        teamDiv.style.animationDelay = `${index * 0.3}s`;
-        teamDiv.innerHTML = `
-          <h3>🏆 ${generateTeamName()}</h3>
-          <ul>${team.map(n => `<li>👤 ${n}</li>`).join("")}</ul>
+        const mascot = mascots[Math.floor(Math.random() * mascots.length)];
+        const teamName = getRandomTeamName();
+        card.innerHTML = `
+          <div class="team-title">${teamName}</div>
+          <div class="mascot">${mascot}</div>
+          <ul>${members.map(m => `<li>${m}</li>`).join("")}</ul>
         `;
-        container.appendChild(teamDiv);
+        container.appendChild(card);
       });
-
-      document.getElementById("reshuffleBtn").style.display = "inline-block";
     }
 
-    function reshuffleTeams() {
-      startCountdown();
+    function fireConfetti() {
+      const emojis = ["🎉", "✨", "🎊", "💥", "🔥"];
+      const particles = [];
+
+      for (let i = 0; i < 100; i++) {
+        particles.push({
+          emoji: emojis[Math.floor(Math.random() * emojis.length)],
+          x: Math.random() * confettiCanvas.width,
+          y: Math.random() * confettiCanvas.height,
+          vx: (Math.random() - 0.5) * 4,
+          vy: Math.random() * -5 - 1,
+          opacity: 1
+        });
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+        ctx.font = "20px serif";
+
+        particles.forEach(p => {
+          ctx.globalAlpha = p.opacity;
+          ctx.fillText(p.emoji, p.x, p.y);
+          p.x += p.vx;
+          p.y += p.vy;
+          p.opacity -= 0.01;
+        });
+
+        ctx.globalAlpha = 1;
+
+        if (particles.some(p => p.opacity > 0)) {
+          requestAnimationFrame(draw);
+        }
+      }
+
+      draw();
     }
 
-    window.onload = setRandomMascot;
+    const defaultNames = [
+      "Shiv", "Uttam", "Pradip", "Harshal",
+      "Prakash", "Nilesh", "Gaurav", "Shambhavi",
+      "Madhav", "Vrushali", "Shubham", "Kaveri"
+    ];
+
+    function renderNameCheckboxes() {
+      const container = document.getElementById("nameCheckboxes");
+      container.innerHTML = defaultNames.map(name => `
+    <label style="display:block; margin-bottom:5px;">
+      <input type="checkbox" value="${name}" checked /> ${name}
+    </label>
+  `).join('');
+    }
+
+    renderNameCheckboxes(); // Call this on page load
+
+
+    function renderNameCheckboxes() {
+      const container = document.getElementById("nameCheckboxes");
+      container.innerHTML = defaultNames.map((name, index) => `
+    <label id="name-${index}" style="display:block; margin-bottom:5px;">
+      <input type="checkbox" value="${name}" checked /> ${name}
+    </label>
+  `).join('');
+    }
+
+
+    document.getElementById("newNameInput").addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault(); // prevent form submission if inside a form
+        addName();
+      }
+    });
+
+    function addName() {
+      const input = document.getElementById("newNameInput");
+      const name = input.value.trim();
+      if (name && !defaultNames.includes(name)) {
+        defaultNames.push(name);
+        renderNameCheckboxes();
+        input.value = '';
+
+        // Scroll to the newly added name
+        const newIndex = defaultNames.length - 1;
+        const newElement = document.getElementById(`name-${newIndex}`);
+        if (newElement) {
+          newElement.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }
+    }
+
+    function selectAll(state) {
+      const checkboxes = document.querySelectorAll('#nameCheckboxes input[type="checkbox"]');
+      checkboxes.forEach(cb => cb.checked = state);
+    }
+
   </script>
-
 </body>
+
 </html>
