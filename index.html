@@ -221,6 +221,47 @@
     .name-list::-webkit-scrollbar-track {
       background: #1c1c1c;
     }
+
+    .main {
+      display: flex;
+      gap: 20px;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+
+    /* Responsive layout tweaks */
+    @media (max-width: 768px) {
+      .main {
+        flex-direction: column;
+      }
+
+      .left-panel,
+      .right-panel {
+        width: 100%;
+        max-width: 100%;
+      }
+
+      .control-panel {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .control-panel input[type="text"],
+      .control-panel button {
+        width: 100%;
+      }
+
+      .team-card {
+        width: 100% !important;
+        font-size: 1rem;
+      }
+
+      .mascot {
+        font-size: 2rem;
+      }
+    }
   </style>
 </head>
 
